@@ -1,0 +1,4 @@
+{
+  "watch": ["src", "index.js"],
+  "ignore": ["activity.json", "status.json"]
+}
