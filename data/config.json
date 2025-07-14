@@ -7,10 +7,8 @@
   "guildConfigs": {
     "655596814279376898": {
       "logChannelIds": "all",
-      "staffRoles": [
-        "Bot"
-      ],
-      "inactivityThresholdHours": 72,
+      "staffRoles": "all",
+      "inactivityThresholdHours": 24,
       "active": true
     }
   }

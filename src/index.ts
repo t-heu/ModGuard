@@ -25,7 +25,7 @@ const client = new Client({
 });
 
 client.on('guildCreate', async (guild: Guild) => {
-  console.log(`✅ Registrados no servidor ${guild.name} ${guild.id}`);
+  console.log(`🚪 ModGuard entrou no servidor ${guild.name} ${guild.id}`);
   if (client.user) {
     await registerCommands(client.user.id, guild.id);
   }

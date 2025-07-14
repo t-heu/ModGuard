@@ -1,4 +1,3 @@
-// src/helpers/registerCommands.ts
 import { REST, Routes, SlashCommandBuilder } from 'discord.js';
 
 export async function registerCommands(clientId: string, guildId: string): Promise<void> {
