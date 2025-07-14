@@ -1,4 +1,3 @@
-// src/utils/config.ts
 import fs from 'fs';
 import path from 'path';
 
@@ -47,4 +46,16 @@ function saveConfig() {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
 }
 
-export { config, saveConfig };
+const activityPath = path.resolve(__dirname, '../../data/activity.json');
+
+interface ActivityMap {
+  [memberId: string]: number;
+}
+
+let activity: ActivityMap = {};
+if (fs.existsSync(activityPath)) {
+  const raw = fs.readFileSync(activityPath, 'utf-8');
+  activity = JSON.parse(raw);
+}
+
+export { config, saveConfig, activity, activityPath };

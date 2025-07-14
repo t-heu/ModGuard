@@ -58,7 +58,7 @@ export async function handleCommand(
       await handleSetThreshold(interaction, guildConfig);
       break;
     case 'statusstaff':
-      await handleStatusStaff(interaction);
+      await handleStatusStaff(interaction, client);
       break;
   }
 }

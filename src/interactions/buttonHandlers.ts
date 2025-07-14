@@ -1,37 +1,32 @@
-import { ButtonInteraction } from 'discord.js';
-import fs from 'fs';
-import path from 'path';
+import { ButtonInteraction, Client } from 'discord.js';
 
-import { config } from '../utils/config';
+import { config, activity } from '../utils/config';
+import { generateInactivityReport } from '../utils/generateInactivityReport';
 
-const activityPath = path.resolve(__dirname, '../data/activity.json');
-const activity: Record<string, number> = fs.existsSync(activityPath)
-  ? JSON.parse(fs.readFileSync(activityPath, 'utf-8'))
-  : {};
-
-export async function handleVerDetalhes(interaction: ButtonInteraction) {
+export async function handleVerDetalhes(interaction: ButtonInteraction, client: Client) {
   try {
+    if (!client.user) return;
+
+    const botId = client.user.id;
+
     const guildConfig = config.guildConfigs[interaction.guild!.id] || config.configDefault;
     const staffRoles = guildConfig.staffRoles || [];
     const thresholdHours = guildConfig.inactivityThresholdHours || 24;
     const threshold = Date.now() - thresholdHours * 60 * 60 * 1000;
 
-    const members = await interaction.guild!.members.fetch();
+    const membersCollection = await interaction.guild!.members.fetch();
 
-    const inativos = members.filter(member => {
-      let isStaff: boolean;
-      if (staffRoles === 'all') {
-        isStaff = member.roles.cache.some(role => !role.managed && role.name !== '@everyone');
-      } else {
-        isStaff = member.roles.cache.some(role => staffRoles.includes(role.name));
-      }
-      const lastSeen = activity[member.id] || 0;
-      return isStaff && lastSeen < threshold;
-    });
+    // ❗ Ignora o próprio bot e outros bots
+    const members = membersCollection.filter(member => !member.user.bot || member.id === botId);
 
-    const lista = inativos.size > 0
-      ? inativos.map(m => `- ${m.user.tag}`).join('\n')
-      : 'Nenhum membro inativo.';
+    const { lista } = generateInactivityReport(
+      interaction.guild!,
+      members,
+      activity,
+      threshold,
+      staffRoles,
+      botId
+    );
 
     await interaction.reply({
       content: `📋 **Detalhes dos membros inativos:**\n${lista}`,

@@ -1,25 +1,22 @@
-import { EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
-import fs from 'fs';
-import path from 'path';
+import { EmbedBuilder, ChatInputCommandInteraction, Client } from 'discord.js';
+import { config, activity } from '../utils/config';
 
-import { config } from '../utils/config';
-
-const activityPath = path.resolve(__dirname, '../../data/activity.json');
-
-const activity: Record<string, number> = fs.existsSync(activityPath)
-  ? JSON.parse(fs.readFileSync(activityPath, 'utf-8'))
-  : {}; 
-
-export async function handleStatusStaff(interaction: ChatInputCommandInteraction) {
+export async function handleStatusStaff(interaction: ChatInputCommandInteraction, client: Client) {
   const guild = interaction.guild;
   if (!guild) return;
+  if (!client.user) return;
+
+  const botId = client.user.id;
 
   const guildConfig = config.guildConfigs[guild.id] || {};
   const staffRoles = guildConfig.staffRoles || config.configDefault.staffRoles;
   const thresholdHours = guildConfig.inactivityThresholdHours || config.configDefault.inactivityThresholdHours;
   const threshold = Date.now() - thresholdHours * 60 * 60 * 1000;
 
-  const members = await guild.members.fetch();
+  const membersCollection = await guild.members.fetch();
+
+  // ❗ Ignora o próprio bot e outros bots
+  const members = membersCollection.filter(member => !member.user.bot || member.id === botId);
 
   let inativos = 0;
   let acoesModeracao = 0; // Ajuste conforme sua implementação real
@@ -27,6 +24,8 @@ export async function handleStatusStaff(interaction: ChatInputCommandInteraction
   let atividadeGeral = 0;
 
   members.forEach(member => {
+    if (member.id === botId) return; // Ignora o próprio bot
+
     let isStaff = false;
     if (staffRoles === 'all') {
       isStaff = member.roles.cache.some(role => !role.managed && role.name !== '@everyone');
@@ -38,6 +37,7 @@ export async function handleStatusStaff(interaction: ChatInputCommandInteraction
 
     const lastSeen = activity[member.id] || 0;
     if (lastSeen < threshold) inativos++;
+
     mensagensEnviadas++; // Simulação - adapte se tiver contagem real
   });
 

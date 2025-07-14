@@ -54,14 +54,14 @@ client.once('ready', async () => {
         const guild = client.guilds.cache.get(guildId);
         if (guild) {
           try {
-            await checkInactivity(guild);
+            await checkInactivity(guild, client.user!.id);
           } catch (error) {
             console.error(`Erro ao checar inatividade no servidor ${guildId}:`, error);
           }
         }
       }
     }
-  }, 1000 * 60 * 60);
+  }, 1000 * 60 * 60 * 12);
 });
 
 client.on('messageCreate', message => {
@@ -78,7 +78,7 @@ client.on('messageCreate', message => {
 
 client.on('interactionCreate', async (interaction) => {
   if (interaction.isButton() && interaction.customId === 'ver_detalhes' && interaction.guild) {
-    await handleVerDetalhes(interaction);
+    await handleVerDetalhes(interaction, client);
     return;
   }
 
