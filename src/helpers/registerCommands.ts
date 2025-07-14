@@ -1,22 +1,26 @@
-const { REST, Routes, SlashCommandBuilder } = require('discord.js');
-// Registrar comandos slash por guild
-async function registerCommands(clientId, guildId) {
+// src/helpers/registerCommands.ts
+import { REST, Routes, SlashCommandBuilder } from 'discord.js';
+
+export async function registerCommands(clientId: string, guildId: string): Promise<void> {
   const commands = [
     new SlashCommandBuilder()
       .setName('setup')
       .setDescription('Configura o bot para este servidor')
       .addChannelOption(option =>
-        option.setName('canal')
+        option
+          .setName('canal')
           .setDescription('Canal para envio dos relatórios')
           .setRequired(false)
       )
       .addRoleOption(option =>
-        option.setName('cargo')
+        option
+          .setName('cargo')
           .setDescription('Cargo da staff que será monitorado')
           .setRequired(false)
       )
       .addIntegerOption(option =>
-        option.setName('tempo')
+        option
+          .setName('tempo')
           .setDescription('Tempo de inatividade (em horas)')
           .setRequired(false)
           .addChoices(
@@ -26,18 +30,20 @@ async function registerCommands(clientId, guildId) {
           )
       ),
     new SlashCommandBuilder()
-    .setName('addchannel')
-    .setDescription('Adiciona um canal para log')
-    .addChannelOption(option =>
-      option.setName('canal')
-        .setDescription('Canal para adicionar')
-        .setRequired(true)
-    ),
+      .setName('addchannel')
+      .setDescription('Adiciona um canal para log')
+      .addChannelOption(option =>
+        option
+          .setName('canal')
+          .setDescription('Canal para adicionar')
+          .setRequired(true)
+      ),
     new SlashCommandBuilder()
       .setName('removechannel')
       .setDescription('Remove um canal de log')
       .addChannelOption(option =>
-        option.setName('canal')
+        option
+          .setName('canal')
           .setDescription('Canal para remover')
           .setRequired(true)
       ),
@@ -45,7 +51,8 @@ async function registerCommands(clientId, guildId) {
       .setName('addrole')
       .setDescription('Adiciona um cargo da staff')
       .addRoleOption(option =>
-        option.setName('cargo')
+        option
+          .setName('cargo')
           .setDescription('Cargo a adicionar')
           .setRequired(true)
       ),
@@ -53,7 +60,8 @@ async function registerCommands(clientId, guildId) {
       .setName('removerole')
       .setDescription('Remove um cargo da staff')
       .addRoleOption(option =>
-        option.setName('cargo')
+        option
+          .setName('cargo')
           .setDescription('Cargo a remover')
           .setRequired(true)
       ),
@@ -61,10 +69,15 @@ async function registerCommands(clientId, guildId) {
       .setName('setthreshold')
       .setDescription('Define o tempo de inatividade')
       .addIntegerOption(option =>
-        option.setName('tempo')
+        option
+          .setName('tempo')
           .setDescription('Tempo (em horas)')
           .setRequired(true)
-          .addChoices({ name: '24h', value: 24 }, { name: '48h', value: 48 }, { name: '72h', value: 72 })
+          .addChoices(
+            { name: '24h', value: 24 },
+            { name: '48h', value: 48 },
+            { name: '72h', value: 72 }
+          )
       ),
     new SlashCommandBuilder()
       .setName('statusstaff')
@@ -74,7 +87,7 @@ async function registerCommands(clientId, guildId) {
       .setDescription('Mostra ajuda sobre o bot')
   ].map(cmd => cmd.toJSON());
 
-  const rest = new REST({ version: '10' }).setToken(process.env.TOKEN_BOT_SECRET);
+  const rest = new REST({ version: '10' }).setToken(process.env.TOKEN_BOT_SECRET ?? '');
 
   try {
     await rest.put(
@@ -86,5 +99,3 @@ async function registerCommands(clientId, guildId) {
     console.error('❌ Erro ao registrar comandos:', error);
   }
 }
-
-module.exports = {registerCommands}

@@ -1,0 +1,17 @@
+{
+  "configDefault": {
+    "logChannelId": "all",
+    "staffRoles": "all",
+    "inactivityThresholdHours": 24
+  },
+  "guildConfigs": {
+    "655596814279376898": {
+      "logChannelIds": "all",
+      "staffRoles": [
+        "Bot"
+      ],
+      "inactivityThresholdHours": 72,
+      "active": true
+    }
+  }
+}

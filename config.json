@@ -1,8 +1,0 @@
-{
-  "configDefault": {
-    "logChannelId": "all",
-    "staffRoles": "all",
-    "inactivityThresholdHours": 24
-  },
-  "guildConfigs": {}
-}
